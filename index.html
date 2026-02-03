@@ -1,132 +1,272 @@
 <!DOCTYPE html>
 <html lang="ja">
-    <head>
-        <meta charset="UTF-8">
-        <!--画面のサイズを合わせる -->
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>ランチ交流会　受付プロトタイプ</title>
-        <style>
-            body{
-                font-family: sans-serif;
-                padding: 40px;
-                line-height: 1.6rem;
-                background-color: #f4f7f6;
-            }
-            .card{
-                background: white;
-                padding: 30px;
-                border-radius: 10px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-                max-width: 500px;
-                margin: auto;
-            }
-            h1{
-                color: #333;
-                font-size: 1.5rem;
-                border-left: 5px solid #007bff;
-                padding-left: 15px;
 
-            }
-            input{
-                width: 100%;
-                padding: 10px;
-                margin: 10px 0;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                box-sizing: border-box;
-            }
-            button{
-                width: 100%;
-                padding: 12px;
-                background-color: #007bff;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: 1rem;  
-            }
-            button:hover{
-                background-color: #0056b3
-            }
-            #result{
-                margin-top: 20px;
-                padding: 15px;
-                border-radius: 5px;
-                display: none;
-            }
-            .success{
-                display:block !important;
-                background-color: #d4edda;
-                color: #155724;
+<head>
+    <meta charset="UTF-8">
+    <!--画面のサイズを合わせる -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ランチ交流会　受付プロトタイプ</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 40px;
+            line-height: 1.6rem;
+            background-color: #f4f7f6;
+        }
 
-            }
-            .warning{
-                display: block !important;;
-                background-color: #fff3cd;           
-                color: #856404;
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: auto;
+        }
 
-            }
-        </style>
-    </head>
-    <body>
-        <div class="card">
-            <h1>ランチ交流会　受付</h1>
-            <p>お名前を入力して参加ボタンを押してください。</p>
+        h1 {
+            color: #333;
+            font-size: 1.5rem;
+            border-left: 5px solid #007bff;
+            padding-left: 15px;
 
-            <input type="text" id="userName" placeholder="お名前を入力（必須）">
-            <input type = "text" id="mailAddress" placeholder="メールアドレスを入力（必須）">
-            <input type="text" id="userAddress" placeholder="住所を入力（任意）">
-            
-            <button onclick="checkRegistration()">参加登録する</button>
+        }
 
-            <div id="result"></div>
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 0.9rem;
+
+        }
+
+        .checkbox-group {
+            margin: 10px 0;
+        }
+
+        .checkbox-group label {
+            display: inline-block;
+            margin-right: 15px;
+            font-weight: normal;
+        }
+
+        .checkbox-group input {
+            width: auto;
+            margin-right: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+
+
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        button:hover {
+            background-color: #0056b3
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .success {
+            display: block !important;
+            background-color: #d4edda;
+            color: #155724;
+
+        }
+
+        .error {
+            display: block !important;
+            ;
+            background-color: #ffcdcd;
+            color: #850404;
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h1>学生交流会　参加登録</h1>
+        <p>プロフィールを入力して参加ボタンを押してください。</p>
+
+        <label>お名前を入力（必須）</label>
+        <input type="text" id="userName" placeholder="例：山田　太郎">
+        <label>メールアドレスを入力（必須）</label>
+        <input type="text" id="mailAddress" placeholder="例：taro@example.ac.jp">
+        <label>大学名（必須）</label>
+        <input type="text" id="university" placeholder="例：○○大学">
+        <label>学部・学科（必須）</label>
+        <input type="text" id="faculty" placeholder="例：工学部　情報工学科">
+
+        <label>学年（必須）</label>
+        <select id="userGrade">
+            <option value="">選択してください</option>
+            <option value="１年生">１年生</option>
+            <option value="２年生">２年生</option>
+            <option value="３年生">３年生</option>
+            <option value="４年生">４年生</option>
+            <option value="院生・その他">院生・その他</option>
+        </select>
+
+        <label>興味のあるトピック（任意）</label>
+        <div class="checkbox-group">
+            <label><input type="checkbox" name="interest" value="プログラミング">プログラミング</label>
+            <label><input type="checkbox" name="interest" value="デザイン">デザイン</label>
+            <label><input type="checkbox" name="interest" value="キャリア・教育">キャリア・教育</label>
         </div>
-        
 
-        <script>
-        function checkRegistration(){
+        <label>住所を入力（任意）</label>
+        <input type="text" id="userAddress" placeholder="住所を入力">
+
+        <button onclick="checkRegistration()">参加登録する</button>
+
+        <div id="result"></div>
+    </div>
+
+
+    <script>
+        function checkRegistration() {
             const name = document.getElementById('userName').value
             const mail = document.getElementById('mailAddress').value
+            const uni = document.getElementById('university').value
+            const fac = document.getElementById('faculty').value
+            const gra = document.getElementById('userGrade').value
+            // const   = document.getElementById('userGrade').value
             const address = document.getElementById('userAddress').value
+
+
+
             // console.log(name,address)
             const resultDiv = document.getElementById('result')
 
-            // if(name.trim() === "" ){
-            //     // resultDiv.style.display = "block"
-            //     resultDiv.className = "warning"
-            //     resultDiv.innerHTML = "お名前が入力されていません。"
-            // }else{
-            //     if(mail.trim() === ""){
-            //         resultDiv.className = "warning"
-            //         resultDiv.innerHTML = "メールアドレスが入力されていません。"
-            //     }else{
 
-            if(name.trim() === "" ){
-                // resultDiv.style.display = "block"
-                resultDiv.className = "warning"
-                resultDiv.innerHTML = "お名前が入力されていません。"
-                return
-            }
-
-            if(mail.trim() === ""){
-                resultDiv.className = "warning"
-                resultDiv.innerHTML = "メールアドレスが入力されていません。"
-                return
-            }
-            // resultDiv.style.display = "block"
             resultDiv.className = "success"
-            let message = "ようこそ、" + name +"さん！<br>ランチ交流会への仮登録が完了しました。"
-            if(address.trim() !== "" || mail.trim() !== ""){
-                message += "<br>メールアドレス：" + mail + "<br>ご住所：" + address
-            }
-            
-            resultDiv.innerHTML = message
-        }
-            
-            
-        
-            
-        </script>
+            resultDiv.innerHTML = ""
+            let chkEr = false
 
-    </body>
+            if (name.trim() === "") {
+                chkEr = true
+                resultDiv.className = "error"
+                resultDiv.innerHTML = "お名前が入力されていません。<br>"
+            }
+
+            if (mail.trim() === "") {
+                chkEr = true
+                resultDiv.className = "error"
+                //  resultDiv.innerHTML +=  "メールアドレスが入力されていません。"
+                resultDiv.innerHTML = resultDiv.innerHTML + "メールアドレスが入力されていません。<br>"
+            }
+
+            if (uni.trim() === "") {
+                chkEr = true
+                resultDiv.className = "error"
+                resultDiv.innerHTML = resultDiv.innerHTML + "大学名が入力されていません。<br>"
+            }
+
+            if (fac.trim() === "") {
+                chkEr = true
+                resultDiv.className = "error"
+                resultDiv.innerHTML = resultDiv.innerHTML + "学部・学科が入力されていません。<br>"
+            }
+
+            if (gra.trim() === "") {
+                chkEr = true
+                resultDiv.className = "error"
+                resultDiv.innerHTML = resultDiv.innerHTML + "学年が選択されていません。<br>"
+            }
+
+
+
+            resultDiv.style.display = "block"
+
+
+            if (chkEr === true) {
+
+                return
+            }
+
+
+
+
+
+            let message = "ようこそ、" + name + "さん！<br>ランチ交流会への仮登録が完了しました。"
+
+            message += "<br>メールアドレス：" + mail
+                + "<br>大学名" + uni
+                + "<br>学部・学科" + fac
+                + "<br>学年" + gra
+
+
+            const checkboxes = document.getElementsByName('interest')
+
+            let interests = ''
+
+            for (const checkbox of checkboxes) {
+                // 繰り返し配列からcheckboxへ取り出す
+                if (checkbox.checked === true) {
+                    if (interests === '') {
+                        interests = '<br>興味：'
+                        interests += checkbox.value
+                    } else {
+                        interests += ',' + checkbox.value
+                    }
+                }
+            }
+
+            message += interests + "<br>ご住所：" + address
+
+
+
+
+
+
+
+            resultDiv.innerHTML = message
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+
+</body>
+
 </html>
