@@ -181,13 +181,13 @@
             const elemAddress = document.getElementById('userAddress')
             const elemMessa = document.getElementById('userMessage')
 
-            const name = elemName.value
-            const mail = elemMail.value
-            const uni = elemUni.value
-            const fac = elemFac.value
-            const gra = elemGra.value
-            const address = elemAddress.value
-            const messa = elemMessa.value
+            const name = elemName.value.trim()
+            const mail = elemMail.value.trim()
+            const uni = elemUni.value.trim()
+            const fac = elemFac.value.trim()
+            const gra = elemGra.value.trim()
+            const address = elemAddress.value.trim()
+            const messa = elemMessa.value.trim()
 
             elemName.classList.remove('input-error', 'input-success')
             elemMail.classList.remove('input-error', 'input-success')
@@ -209,7 +209,7 @@
 
 
 
-            if (name.trim() === "") {
+            if (name === "") {
                 elemName.classList.add('input-error')
                 chkEr = true
                 resultDiv.className = "error"
@@ -220,7 +220,7 @@
 
 
 
-            if (mail.trim() === "") {
+            if (mail === "") {
                 elemMail.classList.add('input-error')
                 chkEr = true
                 resultDiv.className = "error"
@@ -232,7 +232,7 @@
 
 
 
-            if (uni.trim() === "") {
+            if (uni === "") {
                 elemUni.classList.add('input-error')
                 chkEr = true
                 resultDiv.className = "error"
@@ -243,7 +243,7 @@
 
 
 
-            if (fac.trim() === "") {
+            if (fac === "") {
                 elemFac.classList.add('input-error')
                 chkEr = true
                 resultDiv.className = "error"
@@ -254,7 +254,7 @@
 
 
 
-            if (gra.trim() === "") {
+            if (gra === "") {
                 elemGra.classList.add('input-error')
                 chkEr = true
                 resultDiv.className = "error"
@@ -298,12 +298,12 @@
             for (const radio of radioes) {
                 // 繰り返し配列からcheckboxへ取り出す
                 if (radio.checked === true) {
-                    parties = '<br>懇親会の参加：' + radio.value
+                    parties = radio.value
                     break
                 }
-           
-            }
 
+            }
+            message += '<br>懇親会の参加：'
             message += parties
 
 
@@ -316,16 +316,25 @@
                 // 繰り返し配列からcheckboxへ取り出す
                 if (checkbox.checked === true) {
                     if (interests === '') {
-                        interests = '<br>興味：'
                         interests += checkbox.value
                     } else {
+
                         interests += ',' + checkbox.value
                     }
                 }
             }
 
-            message += interests + "<br>ご住所：" + address + "<br>ひとこと：" + messa
+            if (interests !== '') {
+                message += "<br>興味：" + interests
+            }
 
+            if (address !== '') {
+                message += "<br>ご住所：" + address
+            }
+
+            if (messa !== '') {
+                message += "<br>ひとこと：" + messa
+            }
 
 
 
@@ -334,11 +343,46 @@
 
             resultDiv.innerHTML = message
 
+
+
+
+
+            const arrayInterests = interests ? interests.split(',') : [];
+
+
+            const userData = {
+                name,
+                email: mail,
+                university: uni,
+                department: fac,
+                grade: gra,
+                interests: arrayInterests,
+                address: address,
+                message: messa,
+                party: parties,
+                updatedAt: new Date().toLocaleString()
+
+
+
+
+            };
+
+            saveToLocalStorage(userData)
+
+            // console.log(userData)
+            
         }
 
 
+        function saveToLocalStorage(data){
+            const storageKey = 'student_list'
+            const currentListJson = localStorage.getItem(storageKey)
+            let studentList = currentListJson ? JSON.parse(currentListJson):{};
 
+            studentList[data.email] = data
 
+            localStorage.setItem(storageKey,JSON.stringify(studentList))
+        }
 
 
 
