@@ -41,12 +41,13 @@
 
         .checkbox-group,
         .radio-group {
-            margin: 10px 0;
+            margin: 5px 0;
         }
 
         .checkbox-group label,
         .radio-group label {
             display: inline-block;
+            margin-top: 0;
             margin-right: 15px;
             font-weight: normal;
         }
@@ -93,6 +94,25 @@
             background-color: #0056b3
         }
 
+        .button_1 {
+            margin-top: 15px;
+            background-color: #3c3c3c;
+        }
+
+        .button_1:hover {
+            background-color: #4d4d4e
+        }
+
+        .button_2 {
+            margin-top: 15px;
+            background-color: #f70303;
+        }
+
+        .button_2:hover {
+            background-color: #b70707
+        }
+
+
         #result {
             margin-top: 20px;
             padding: 15px;
@@ -122,47 +142,60 @@
         <h1>学生交流会　参加登録</h1>
         <p>プロフィールを入力して参加ボタンを押してください。</p>
 
-        <label>お名前を入力（必須）</label>
-        <input type="text" id="userName" placeholder="例：山田　太郎">
-        <label>メールアドレスを入力（必須）</label>
-        <input type="text" id="mailAddress" placeholder="例：taro@example.ac.jp">
-        <label>大学名（必須）</label>
-        <input type="text" id="university" placeholder="例：○○大学">
-        <label>学部・学科（必須）</label>
-        <input type="text" id="faculty" placeholder="例：工学部　情報工学科">
-
-        <label>学年（必須）</label>
-        <select id="userGrade">
-            <option value="">選択してください</option>
-            <option value="１年生">１年生</option>
-            <option value="２年生">２年生</option>
-            <option value="３年生">３年生</option>
-            <option value="４年生">４年生</option>
-            <option value="院生・その他">院生・その他</option>
-        </select>
-
-        <label>懇親会への参加有無</label>
+        <label>登録区分</label>
         <div class="radio-group">
-            <label><input type="radio" name="party" value="しない" checked>しない</label>
-            <label><input type="radio" name="party" value="する" checked>する</label>
-        </div>
-
-        <label>興味のあるトピック（任意）</label>
-        <div class="checkbox-group">
-            <label><input type="checkbox" name="interest" value="プログラミング">プログラミング</label>
-            <label><input type="checkbox" name="interest" value="デザイン">デザイン</label>
-            <label><input type="checkbox" name="interest" value="キャリア・教育">キャリア・教育</label>
+            <label><input type="radio" name="touroku" value="新規" checked>新規</label>
+            <label><input type="radio" name="touroku" value="修正" onclick="newPage()">修正</label>
+            <label><input type="radio" name="touroku" value="削除" onclick="newPage()">削除</label>
         </div>
 
 
-        <label>住所を入力（任意）</label>
-        <input type="text" id="userAddress" placeholder="住所">
 
-        <label>ひとこと（任意）</label>
-        <textarea id="userMessage" placeholder="ご意見やメッセージなど"></textarea>
+        <div>
+            <label>お名前を入力（必須）</label>
+            <input type="text" id="userName" placeholder="例：山田　太郎">
+            <label>メールアドレスを入力（必須）</label>
+            <input type="text" id="mailAddress" placeholder="例：taro@example.ac.jp">
+            <label>大学名（必須）</label>
+            <input type="text" id="university" placeholder="例：○○大学">
+            <label>学部・学科（必須）</label>
+            <input type="text" id="faculty" placeholder="例：工学部　情報工学科">
+
+            <label>学年（必須）</label>
+            <select id="userGrade">
+                <option value="">選択してください</option>
+                <option value="１年生">１年生</option>
+                <option value="２年生">２年生</option>
+                <option value="３年生">３年生</option>
+                <option value="４年生">４年生</option>
+                <option value="院生・その他">院生・その他</option>
+            </select>
+
+            <label>懇親会への参加有無</label>
+            <div class="radio-group">
+                <label><input type="radio" name="party" value="しない" checked>しない</label>
+                <label><input type="radio" name="party" value="する">する</label>
+            </div>
+
+            <label>興味のあるトピック（任意）</label>
+            <div class="checkbox-group">
+                <label><input type="checkbox" name="interest" value="プログラミング">プログラミング</label>
+                <label><input type="checkbox" name="interest" value="デザイン">デザイン</label>
+                <label><input type="checkbox" name="interest" value="キャリア・教育">キャリア・教育</label>
+            </div>
+
+
+            <label>住所を入力（任意）</label>
+            <input type="text" id="userAddress" placeholder="住所">
+
+            <label>ひとこと（任意）</label>
+            <textarea id="userMessage" placeholder="ご意見やメッセージなど"></textarea>
+        </div>
 
 
         <button onclick="checkRegistration()">参加登録する</button>
+        <button onclick="showContain()" class="button_1">登録内容を表示する</button>
+        <button onclick="sakujoContain()" class="button_2">登録を取り消す</button>
         <div id="memberCount"></div>
 
 
@@ -171,6 +204,9 @@
 
 
     <script>
+        function newPage() {
+            // Div.className="newCard"
+        }
         var count = 0
         function checkRegistration() {
             const elemName = document.getElementById('userName')
@@ -292,10 +328,10 @@
                 + "<br>所属:" + uni + fac + gra
 
 
-            const radioes = document.getElementsByName('party')
+            const radios = document.getElementsByName('party')
             let parties = ''
 
-            for (const radio of radioes) {
+            for (const radio of radios) {
                 // 繰り返し配列からcheckboxへ取り出す
                 if (radio.checked === true) {
                     parties = radio.value
@@ -341,7 +377,12 @@
 
 
 
+
+
             resultDiv.innerHTML = message
+
+
+
 
 
 
@@ -370,21 +411,96 @@
             saveToLocalStorage(userData)
 
             // console.log(userData)
-            
+
         }
 
 
-        function saveToLocalStorage(data){
+        function saveToLocalStorage(data) {
             const storageKey = 'student_list'
             const currentListJson = localStorage.getItem(storageKey)
-            let studentList = currentListJson ? JSON.parse(currentListJson):{};
+            let studentList = currentListJson ? JSON.parse(currentListJson) : {};
 
             studentList[data.email] = data
 
-            localStorage.setItem(storageKey,JSON.stringify(studentList))
+            localStorage.setItem(storageKey, JSON.stringify(studentList))
         }
 
 
+        function showContain() {
+            const searchEmail = window.prompt('登録済みのメールアドレスを入力してください')
+
+            if (!searchEmail) {
+                return
+            }
+
+            const storageKey = 'student_list'
+            // 登録者リスト一覧を引き出す
+            const currentListJson = localStorage.getItem(storageKey)
+
+            if (!currentListJson) {
+                alert('登録データがまだありません。')
+                return
+            }
+
+            const studentList = JSON.parse(currentListJson)
+            // e-mailから取り出した１人分のデータ
+            const userData = studentList[searchEmail.trim()]
+
+            if (!userData) {
+                alert('該当するメールアドレスが見つかりませんでした。')
+            }
+
+            console.log(userData)
+
+
+
+            document.getElementById('userName').value = userData.name
+            document.getElementById('mailAddress').value = userData.email
+            document.getElementById('university').value = userData.university
+            document.getElementById('faculty').value = userData.department
+            document.getElementById('userGrade').value = userData.grade
+            document.getElementById('userAddress').value = userData.address
+            document.getElementById('userMessage').value = userData.message
+
+
+            const radios = document.getElementsByName('party')
+            for (const radio of radios) {
+                if (userData.party === radio.value) {
+                    radio.checked = true
+                } else {
+                    radio.checked = false
+                }
+            }
+
+
+            const checkboxes = document.getElementsByName('interest')
+            const interests = userData.interests
+            for (const checkbox of checkboxes) {
+                for (const interest of interests) {
+                    if (interest === checkbox.value) {
+                        checkbox.checked = true
+                        break
+                    } else {
+                        checkbox.checked = false
+                    }
+                }
+
+                // if(userData.interests.includes(checkbox.value)){
+                //     checkbox.checked = true
+                // }else{
+                //     checkbox.checked = false
+                // }
+
+
+                // if(userData.interests === checkbox.value){
+                //     checkbox.checked = true
+                // }else{
+                //     checkbox.checked = false    
+                // }
+
+            }
+
+        }
 
 
 
