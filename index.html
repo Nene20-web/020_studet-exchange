@@ -90,13 +90,13 @@
             font-size: 1rem;
         }
 
-        button:hover {
+        .button_0:hover {
             background-color: #0056b3
         }
 
         .button_1 {
-            margin-top: 15px;
             background-color: #3c3c3c;
+            margin-top: 15px;
         }
 
         .button_1:hover {
@@ -104,13 +104,15 @@
         }
 
         .button_2 {
-            margin-top: 15px;
             background-color: #f70303;
+            margin-top: 15px;
         }
 
         .button_2:hover {
             background-color: #b70707
         }
+
+
 
 
         #result {
@@ -134,6 +136,13 @@
             color: #850404;
 
         }
+
+        .regist_delete :is(input,select,textarea,.checkbox-group,.radio-group){
+            pointer-events: none;
+            color: #333;
+            background-color: #f1ddec;
+            border-width: 0cap;
+        }
     </style>
 </head>
 
@@ -144,18 +153,20 @@
 
         <label>登録区分</label>
         <div class="radio-group">
-            <label><input type="radio" name="touroku" value="新規" checked>新規</label>
-            <label><input type="radio" name="touroku" value="修正" onclick="newPage()">修正</label>
-            <label><input type="radio" name="touroku" value="削除" onclick="newPage()">削除</label>
+            <label><input type="radio" name="touroku" value="新規" onclick="changePage()" checked>新規</label>
+            <label><input type="radio" name="touroku" value="修正" onclick="changePage()">修正</label>
+            <label><input type="radio" name="touroku" value="削除" onclick="changePage()">削除</label>
         </div>
 
 
 
-        <div>
+
+        <label>メールアドレスを入力（必須）</label>
+        <input type="text" id="mailAddress" placeholder="例：taro@example.ac.jp">
+
+        <div id="select">
             <label>お名前を入力（必須）</label>
             <input type="text" id="userName" placeholder="例：山田　太郎">
-            <label>メールアドレスを入力（必須）</label>
-            <input type="text" id="mailAddress" placeholder="例：taro@example.ac.jp">
             <label>大学名（必須）</label>
             <input type="text" id="university" placeholder="例：○○大学">
             <label>学部・学科（必須）</label>
@@ -193,9 +204,9 @@
         </div>
 
 
-        <button onclick="checkRegistration()">参加登録する</button>
-        <button onclick="showContain()" class="button_1">登録内容を表示する</button>
-        <button onclick="sakujoContain()" class="button_2">登録を取り消す</button>
+        <button id="b0" onclick="checkRegistration()">参加登録する</button>
+        <button id="b1" class="button_1" onclick="showContain()">登録内容を表示する</button>
+        <button id="b2" class="button_2" onclick="sakujoContain()">登録を取り消す</button>
         <div id="memberCount"></div>
 
 
@@ -204,11 +215,17 @@
 
 
     <script>
-        function newPage() {
-            // Div.className="newCard"
+        window.onload = function () {
+            changePage()
         }
-        var count = 0
-        function checkRegistration() {
+
+        function changePage() {
+            // 結果の初期化
+            const resultDiv = document.getElementById('result')
+            resultDiv.className = ""
+            resultDiv.innerHTML = ""
+
+            // 枠色の初期化←これを入れるとsuccessの文字が表示されなくなる
             const elemName = document.getElementById('userName')
             const elemMail = document.getElementById('mailAddress')
             const elemUni = document.getElementById('university')
@@ -230,6 +247,62 @@
             elemUni.classList.remove('input-error', 'input-success')
             elemFac.classList.remove('input-error', 'input-success')
             elemGra.classList.remove('input-error', 'input-success')
+
+
+
+
+            // 登録区分の表示変化
+            const selectDiv = document.getElementById('select')
+            const radio1 = document.querySelector('input[name = "touroku"]:checked')
+            const B0 = document.getElementById('b0')
+            const B1 = document.getElementById('b1')
+            const B2 = document.getElementById('b2')
+
+            B0.style.display = 'block'
+            B1.style.display = 'none'
+            B2.style.display = 'none'
+
+
+
+            if (radio1.value === "新規") {
+                selectDiv.style.display = 'block'
+
+            } else {
+                selectDiv.style.display = 'none'
+                B0.style.display = 'none'
+                B1.style.display = 'block'
+            }
+            return
+        }
+
+
+
+
+
+
+        var count = 0
+        function checkRegistration() {
+            const elemName = document.getElementById('userName')
+            const elemMail = document.getElementById('mailAddress')
+            const elemUni = document.getElementById('university')
+            const elemFac = document.getElementById('faculty')
+            const elemGra = document.getElementById('userGrade')
+            const elemAddress = document.getElementById('userAddress')
+            const elemMessa = document.getElementById('userMessage')
+
+            const name = elemName.value.trim()
+            const mail = elemMail.value.trim()
+            const uni = elemUni.value.trim()
+            const fac = elemFac.value.trim()
+            const gra = elemGra.value.trim()
+            const address = elemAddress.value.trim()
+            const messa = elemMessa.value.trim()
+
+            // elemName.classList.remove('input-error', 'input-success')
+            // elemMail.classList.remove('input-error', 'input-success')
+            // elemUni.classList.remove('input-error', 'input-success')
+            // elemFac.classList.remove('input-error', 'input-success')
+            // elemGra.classList.remove('input-error', 'input-success')
 
 
 
@@ -312,13 +385,21 @@
             }
 
 
+            
+           
 
 
 
 
             const countDiv = document.getElementById('memberCount')
+            // document.getElementById('mailAddress').value = userData.email
+
+            // if(mail.value !== userData.email){
             count = count + 1
             countDiv.innerHTML = "現在の登録者数" + count + "人"
+            // }else{
+            //     countDiv.innerHTML = "現在の登録者数" + count + "人"
+            //  }
 
 
 
@@ -402,11 +483,7 @@
                 message: messa,
                 party: parties,
                 updatedAt: new Date().toLocaleString()
-
-
-
-
-            };
+             };
 
             saveToLocalStorage(userData)
 
@@ -427,7 +504,12 @@
 
 
         function showContain() {
-            const searchEmail = window.prompt('登録済みのメールアドレスを入力してください')
+            //resultの初期化
+            const resultDiv = document.getElementById('result')
+            resultDiv.className = ""
+            resultDiv.innerHTML = ""
+            // const searchEmail = window.prompt('登録済みのメールアドレスを入力してください')
+            const searchEmail = document.getElementById('mailAddress').value.trim()
 
             if (!searchEmail) {
                 return
@@ -448,12 +530,47 @@
 
             if (!userData) {
                 alert('該当するメールアドレスが見つかりませんでした。')
+                return
             }
 
             console.log(userData)
 
+            const select = document.getElementById('select')
+            select.classList.remove('regist_delete')
+
+             
 
 
+
+
+
+
+
+            const selectDiv = document.getElementById('select')
+            selectDiv.style.display = 'block'
+
+
+            // ボタンの表示
+            const B0 = document.getElementById('b0')
+            const B1 = document.getElementById('b1')
+            const B2 = document.getElementById('b2')
+
+            B0.style.display = 'none'
+            B1.style.display = 'none'
+            B2.style.display = 'none'
+
+            const radioF1 = document.querySelector('input[name = "touroku"]:checked')
+            if (radioF1.value === "修正") {
+                B0.style.display = 'block'
+                
+            }else if (radioF1.value = "削除") {
+             B2.style.display = 'block'
+             select.classList.add('regist_delete')
+            }
+
+
+
+            // 登録データの読み込み、表示
             document.getElementById('userName').value = userData.name
             document.getElementById('mailAddress').value = userData.email
             document.getElementById('university').value = userData.university
@@ -485,20 +602,61 @@
                     }
                 }
 
-                // if(userData.interests.includes(checkbox.value)){
-                //     checkbox.checked = true
-                // }else{
-                //     checkbox.checked = false
-                // }
 
-
-                // if(userData.interests === checkbox.value){
-                //     checkbox.checked = true
-                // }else{
-                //     checkbox.checked = false    
-                // }
 
             }
+
+        }
+
+        function sakujoContain(){
+            const selectDiv = document.getElementById('select')
+            const B1 = document.getElementById('b1')
+            const B2 = document.getElementById('b2')
+
+            selectDiv.style.display = 'none'
+            B1.style.display = 'block'
+            B2.style.display = 'none'
+
+            const email = document.getElementById('mailAddress').value.trim()
+
+            let result ={
+                error:false,
+                message:'',
+            }
+            const storageKey = 'student_list'
+            const currentListJson = localStorage.getItem(storageKey)
+            
+            if(!currentListJson){
+                result.error = true
+                result.message = 'メールアドレスが登録されていません。'
+                return result
+            }
+
+            let studentList = JSON.parse(currentListJson)
+            const userData = studentList[email]
+
+            if(!userData){
+                result.error = true
+                result.message = 'メールアドレスが登録されていません。'
+                return result
+            }
+
+            delete studentList[email]
+            localStorage.setItem(storageKey,JSON.stringify(studentList))
+
+            const resultDiv = document.getElementById('result')
+            resultDiv.className = "success"
+            
+            result.message = '登録を削除しました'
+            resultDiv.innerHTML =  result.message
+            return result
+
+            
+            
+            
+
+            
+
 
         }
 
