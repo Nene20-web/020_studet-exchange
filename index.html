@@ -137,7 +137,7 @@
 
         }
 
-        .regist_delete :is(input,select,textarea,.checkbox-group,.radio-group){
+        .regist_delete :is(input, select, textarea, .checkbox-group, .radio-group) {
             pointer-events: none;
             color: #333;
             background-color: #f1ddec;
@@ -216,14 +216,34 @@
 
     <script>
         window.onload = function () {
+            setQueryParams()
             changePage()
         }
 
-        function changePage() {
-            // 結果の初期化
+        function setQueryParams() {
+            const params = new URLSearchParams(window.location.search)
+            const paramEmail = params.get('email')
+
+            if (paramEmail) {
+                document.getElementById('mailAddress').value = paramEmail
+                const elemRegistClass = document.querySelector('input[name = "touroku"][value = "修正"]')
+                if (elemRegistClass) {
+                    elemRegistClass.checked = true
+                }
+            }
+        }
+
+
+        function clearResult() {
             const resultDiv = document.getElementById('result')
             resultDiv.className = ""
             resultDiv.innerHTML = ""
+        }
+
+
+        function changePage() {
+            // 結果の初期化 
+            clearResult()
 
             // 枠色の初期化←これを入れるとsuccessの文字が表示されなくなる
             const elemName = document.getElementById('userName')
@@ -307,12 +327,11 @@
 
 
             // console.log(name,address)
+
+            //結果の初期化
+            clearResult()
             const resultDiv = document.getElementById('result')
-
-
-
             resultDiv.className = "success"
-            resultDiv.innerHTML = ""
             let chkEr = false
 
 
@@ -385,8 +404,8 @@
             }
 
 
-            
-           
+
+
 
 
 
@@ -454,20 +473,7 @@
             }
 
 
-
-
-
-
-
-
             resultDiv.innerHTML = message
-
-
-
-
-
-
-
 
             const arrayInterests = interests ? interests.split(',') : [];
 
@@ -483,7 +489,7 @@
                 message: messa,
                 party: parties,
                 updatedAt: new Date().toLocaleString()
-             };
+            };
 
             saveToLocalStorage(userData)
 
@@ -505,9 +511,7 @@
 
         function showContain() {
             //resultの初期化
-            const resultDiv = document.getElementById('result')
-            resultDiv.className = ""
-            resultDiv.innerHTML = ""
+            clearResult()
             // const searchEmail = window.prompt('登録済みのメールアドレスを入力してください')
             const searchEmail = document.getElementById('mailAddress').value.trim()
 
@@ -538,7 +542,7 @@
             const select = document.getElementById('select')
             select.classList.remove('regist_delete')
 
-             
+
 
 
 
@@ -562,10 +566,10 @@
             const radioF1 = document.querySelector('input[name = "touroku"]:checked')
             if (radioF1.value === "修正") {
                 B0.style.display = 'block'
-                
-            }else if (radioF1.value = "削除") {
-             B2.style.display = 'block'
-             select.classList.add('regist_delete')
+
+            } else if (radioF1.value = "削除") {
+                B2.style.display = 'block'
+                select.classList.add('regist_delete')
             }
 
 
@@ -608,7 +612,7 @@
 
         }
 
-        function sakujoContain(){
+        function sakujoContain() {
             const selectDiv = document.getElementById('select')
             const B1 = document.getElementById('b1')
             const B2 = document.getElementById('b2')
@@ -619,14 +623,14 @@
 
             const email = document.getElementById('mailAddress').value.trim()
 
-            let result ={
-                error:false,
-                message:'',
+            let result = {
+                error: false,
+                message: '',
             }
             const storageKey = 'student_list'
             const currentListJson = localStorage.getItem(storageKey)
-            
-            if(!currentListJson){
+
+            if (!currentListJson) {
                 result.error = true
                 result.message = 'メールアドレスが登録されていません。'
                 return result
@@ -635,27 +639,27 @@
             let studentList = JSON.parse(currentListJson)
             const userData = studentList[email]
 
-            if(!userData){
+            if (!userData) {
                 result.error = true
                 result.message = 'メールアドレスが登録されていません。'
                 return result
             }
 
             delete studentList[email]
-            localStorage.setItem(storageKey,JSON.stringify(studentList))
+            localStorage.setItem(storageKey, JSON.stringify(studentList))
 
             const resultDiv = document.getElementById('result')
             resultDiv.className = "success"
-            
+
             result.message = '登録を削除しました'
-            resultDiv.innerHTML =  result.message
+            resultDiv.innerHTML = result.message
             return result
 
-            
-            
-            
 
-            
+
+
+
+
 
 
         }
