@@ -215,7 +215,24 @@
 
 
     <script>
+
+        let elemName 
+        let elemMail 
+        let elemUni 
+        let elemFac 
+        let elemGra 
+        let elemAddress 
+        let elemMessa 
+
         window.onload = function () {
+         elemName = document.getElementById('userName')
+         elemMail = document.getElementById('mailAddress')
+         elemUni = document.getElementById('university')
+         elemFac = document.getElementById('faculty')
+         elemGra = document.getElementById('userGrade')
+         elemAddress = document.getElementById('userAddress')
+         elemMessa = document.getElementById('userMessage')
+
             setQueryParams()
             changePage()
         }
@@ -240,32 +257,30 @@
             resultDiv.innerHTML = ""
         }
 
-        function setResult(message,isError){
+        function setResult(message, isError) {
             const resultDiv = document.getElementById('result')
             resultDiv.innerHTML = message
-            
 
-            if(isError === true){
+
+            if (isError === true) {
                 resultDiv.className = "error"
-            }else{
+            } else {
                 resultDiv.className = "success"
             }
         }
+
+        //ボタンの宣言
+        var B0 = document.getElementById('b0')
+        var B1 = document.getElementById('b1')
+        var B2 = document.getElementById('b2')
+
 
 
         function changePage() {
             // 結果の初期化 
             clearResult()
 
-            // 枠色の初期化←これを入れるとsuccessの文字が表示されなくなる
-            const elemName = document.getElementById('userName')
-            const elemMail = document.getElementById('mailAddress')
-            const elemUni = document.getElementById('university')
-            const elemFac = document.getElementById('faculty')
-            const elemGra = document.getElementById('userGrade')
-            const elemAddress = document.getElementById('userAddress')
-            const elemMessa = document.getElementById('userMessage')
-
+            // 枠色の初期化
             const name = elemName.value.trim()
             const mail = elemMail.value.trim()
             const uni = elemUni.value.trim()
@@ -286,10 +301,7 @@
             // 登録区分の表示変化
             const selectDiv = document.getElementById('select')
             const radio1 = document.querySelector('input[name = "touroku"]:checked')
-            const B0 = document.getElementById('b0')
-            const B1 = document.getElementById('b1')
-            const B2 = document.getElementById('b2')
-
+            //ボタンの表示
             B0.style.display = 'block'
             B1.style.display = 'none'
             B2.style.display = 'none'
@@ -314,14 +326,6 @@
 
         var count = 0
         function checkRegistration() {
-            const elemName = document.getElementById('userName')
-            const elemMail = document.getElementById('mailAddress')
-            const elemUni = document.getElementById('university')
-            const elemFac = document.getElementById('faculty')
-            const elemGra = document.getElementById('userGrade')
-            const elemAddress = document.getElementById('userAddress')
-            const elemMessa = document.getElementById('userMessage')
-
             const name = elemName.value.trim()
             const mail = elemMail.value.trim()
             const uni = elemUni.value.trim()
@@ -349,7 +353,7 @@
 
 
 
-            // todo
+
             if (name === "") {
                 elemName.classList.add('input-error')
                 chkEr = true
@@ -358,7 +362,7 @@
                     "お名前が入力されていません。<br>",
                     chkEr
                 )
-                
+
             } else {
                 elemName.classList.add('input-success')
             }
@@ -368,7 +372,7 @@
             if (mail === "") {
                 elemMail.classList.add('input-error')
                 chkEr = true
-                
+
                 setResult(
                     "メールアドレスが入力されていません。<br>",
                     chkEr
@@ -427,13 +431,6 @@
 
                 return
             }
-
-
-
-
-
-
-
 
             const countDiv = document.getElementById('memberCount')
             // document.getElementById('mailAddress').value = userData.email
@@ -498,7 +495,7 @@
             }
 
 
-            
+
             resultDiv.innerHTML = message
 
             const arrayInterests = interests ? interests.split(',') : [];
@@ -581,10 +578,6 @@
 
 
             // ボタンの表示
-            const B0 = document.getElementById('b0')
-            const B1 = document.getElementById('b1')
-            const B2 = document.getElementById('b2')
-
             B0.style.display = 'none'
             B1.style.display = 'none'
             B2.style.display = 'none'
@@ -640,8 +633,6 @@
 
         function sakujoContain() {
             const selectDiv = document.getElementById('select')
-            const B1 = document.getElementById('b1')
-            const B2 = document.getElementById('b2')
 
             selectDiv.style.display = 'none'
             B1.style.display = 'block'
@@ -649,7 +640,7 @@
 
             const email = document.getElementById('mailAddress').value.trim()
 
-            
+
             const storageKey = 'student_list'
             const currentListJson = localStorage.getItem(storageKey)
 
@@ -659,18 +650,18 @@
                     'メールアドレスが登録されていません。',
                     true
                 )
-                return 
+                return
             }
 
             let studentList = JSON.parse(currentListJson)
             const userData = studentList[email]
 
             if (!userData) {
-                 setResult(
+                setResult(
                     'メールアドレスが登録されていません。',
                     true
                 )
-                return 
+                return
             }
 
             delete studentList[email]
@@ -678,14 +669,14 @@
 
             const resultDiv = document.getElementById('result')
             resultDiv.className = "success"
-            
+
             setResult(
                 '登録を削除しました',
                 false
 
             )
-            
-            return 
+
+            return
 
 
 
