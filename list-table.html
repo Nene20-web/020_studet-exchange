@@ -30,7 +30,6 @@
         }
 
 
-
         label {
             margin-top: 15px;
             font-weight: bold;
@@ -55,12 +54,13 @@
             padding: 5px;
             border-radius: 5px;
             box-sizing: border-box;
-            margin-left:auto;
+            margin-left: auto;
 
         }
 
         .radio-group label {
             margin-top: 0;
+            margin-left: 10px;
             margin-right: 15px;
             font-weight: bolder;
         }
@@ -70,7 +70,7 @@
             margin-right: 5px;
         }
 
-        button {
+        .card>button {
             width: 300px;
             padding: 12px;
             /* margin-top: 20px; */
@@ -80,8 +80,27 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 1rem;
-            margin-right: auto;
             display: block;
+        }
+
+
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .success {
+            display: block !important;
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            display: block !important;
+            background-color: lightpink;
+            color: #333;
         }
 
         .table-container {
@@ -114,6 +133,17 @@
             white-space: nowrap;
         }
 
+
+
+
+        .list-table tr:hover {
+            background-color: #00b342
+        }
+
+        .even {
+            background-color: #d4edda;
+        }
+
         .list-table th:first-child,
         .list-table td:first-child {
             position: sticky;
@@ -126,25 +156,18 @@
             z-index: 30;
         }
 
-        .list-table tr:hover {
-            background-color: #00b342
+        .page-btn {
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            background-color: white;
+            cursor: pointer;
+            border-radius: 3px;
         }
 
-        #result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 5px;
-            display: none;
-        }
-
-        .success {
-            display: block !important;
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .even {
-            background-color: #d4edda;
+        .page-btn.active {
+            background-color: orange;
+            color: white;
+            border-color: orange;
         }
     </style>
 </head>
@@ -164,9 +187,12 @@
             <label><input type="radio" name="party" value="する">する</label>
         </div>
 
-        <button onclick="listTable()">参加者を参照する</button>
+        <button onclick="listTable()">参加者を照会する</button>
 
         <div id="result"></div>
+
+        <div id="pagination" style="margin-top: 10px; display: flex; gap: 5px;"></div>
+
         <div class="table-container">
             <table class="list-table">
                 <thead>
@@ -192,7 +218,13 @@
 
 
     <script>
-        function listTable() {
+
+        // 現在のページを管理   
+        CONFIG_PAGE = {
+            current: 1,
+            rows: 5,
+        }
+        function listTable(page = 1) {
             // スタイルのクラス名
             const errClassName = 'error'
             const successClassName = 'success'
@@ -217,46 +249,82 @@
                 return
             }
 
+            // 検査条件の名前を取得
+            const elemName = document.getElementById('userName');
+            const valueName = elemName.value.trim();
+
+            // 懇親会参加を取得
+            const elemParty = document.querySelector('input[name="party"]:checked');
+            const valueParty = elemParty.value.trim();
+
+
             const studentList = JSON.parse(currentListJson)
-            const students = Object.values(studentList)
-            let ix = 0
+            let students = Object.values(studentList)
+
+
+            //ページネーションを設定、ページ番号を更新
+            CONFIG_PAGE.current = page
+            const paginationDiv = document.getElementById('pagination')
+            paginationDiv.innerHTML = ''
+
+            // if (searchName && student.name.indexOf(searchName) === -1) {
+            //     continue
+
+            // }
+
+            // // 広→狭
+            // if (radio1.value && radio1.value !== student.party) {
+            //     continue
+            // }
+
+            // 名前の抽出
+            if (valueName) {
+                students = students.filter((student) => {
+                    return student.name.indexOf(valueName) !== -1
+                });
+
+            }
+
+
+            // 懇親会の抽出
+            if (valueParty) {
+                students = students.filter(s => s.party === valueParty);
+            }
 
 
 
-            let searchName = document.getElementById('userName').value.trim()
-            let radio1 = document.querySelector('input[name = "party"]:checked')
-            for (const student of students) {
-                if (searchName && student.name.indexOf(searchName) === -1) {
-                    continue
 
-                }
 
-                // 広→狭
-                if (radio1.value && radio1.value !== student.party) {
-                    continue
-                }
+            //ページネーション計算
+            const totalRows = students.length
+            const totalPages = Math.ceil(totalRows / CONFIG_PAGE.rows)
+            //表示する範囲を決定
+            const pageStart = (CONFIG_PAGE.current - 1) * CONFIG_PAGE.rows
+            const pageEnd = pageStart + CONFIG_PAGE.rows
+            const pageStudents = students.slice(pageStart, pageEnd)
 
+            let ix1 = pageStart
+            for (student of pageStudents) {
+                //セル`tdタグ`を１つずつ作成し、データを設定
+                ix1++
 
                 // 新しい行を作成
                 const row = tbody.insertRow()
+
+                //偶数業はストライプ表示
                 row.className = ""
-
-                ix++
-
-                if (ix % 2 === 0) {
-                    row.className = "even"
+                if ((ix1 % 2) === 0) {
+                    row.className = "list-row-even"
                 }
 
                 // 編集用リンクを作成
                 const email = student.email
                 const editUrl = `index.html?email=${encodeURIComponent(email)}`
 
-                const linkIndex = `<a href="${editUrl}" target="_blank">${ix}</a>`
+                const linkIndex = `<a href="${editUrl}" target="_blank">${ix1}</a>`
 
 
-
-
-                // 'tdタグ'を作成
+                // row.insertCell(0).textContent = ix 
                 row.insertCell(0).innerHTML = linkIndex
                 row.insertCell(1).textContent = student.name
                 row.insertCell(2).textContent = student.email
@@ -269,15 +337,28 @@
                 row.insertCell(9).textContent = student.party
                 row.insertCell(10).textContent = student.updatedAt
 
-
-
             }
 
+            //ページネーションボタンの作成
+            for (let ix2 = 1; ix2 <= totalPages; ix2++) {
+                //ページ切り替え用ボタンを作成
+                const btn = document.createElement('button')
+                //ページ番号を設定
+                btn.textContent = ix2
+                //ページボタンのスタイルを設定
+                btn.className = 'page-btn' + (ix2 === CONFIG_PAGE.current ? ' active' : '')
 
+                //ボタンクリック時にページ指定で描画する
+                btn.onclick = function () {
+                    listTable(ix2)
+                }
+                //ページネーションのエリアにボタンを追加する
+                paginationDiv.appendChild(btn)
+            }
 
             resultDiv.className = successClassName
             // resultDiv.innerHTML = `${students.length}件のデータがありました。`
-            resultDiv.innerHTML = ix + "件のデータがありました。"
+            resultDiv.innerHTML = `${totalRows} 件中 ${pageStart + 1}〜${Math.min(pageEnd, totalRows)} 件を表示中`
 
         }
 
