@@ -24,13 +24,22 @@
 
         h1 {
             color: #333;
-            font-size: 1rem;
+            font-size: 1.5rem;
             border-left: 5px solid #ffa600;
             padding-left: 15px;
         }
 
-        textarea {
-            width: 100%;
+
+
+        label {
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 0.9rem;
+
+        }
+
+        input {
+            width: 300px;
             padding: 10px;
             margin: 5px 0 10px 0;
             border: 1px solid #ddd;
@@ -38,22 +47,33 @@
             box-sizing: border-box;
         }
 
-        label {
-            font-size: 13px;
-        }
 
-        input {
-            width: 30%;
-            padding: 10px;
+        .radio-group {
+            display: inline-block;
             border: 1px solid #ddd;
+            margin: 5px 0 10px 0;
+            padding: 5px;
             border-radius: 5px;
             box-sizing: border-box;
+            margin-left:auto;
+
+        }
+
+        .radio-group label {
+            margin-top: 0;
+            margin-right: 15px;
+            font-weight: bolder;
+        }
+
+        .radio-group input {
+            width: auto;
+            margin-right: 5px;
         }
 
         button {
-            width: 50%;
+            width: 300px;
             padding: 12px;
-            margin-top: 20px;
+            /* margin-top: 20px; */
             background-color: #ffa600;
             color: rgb(0, 0, 0);
             border: none;
@@ -61,7 +81,16 @@
             cursor: pointer;
             font-size: 1rem;
             margin-right: auto;
+            display: block;
         }
+
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+        }
+
 
         .list-table {
             width: 100%;
@@ -72,6 +101,9 @@
         .list-table th {
             background-color: #f8f9fa;
             font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .list-table th,
@@ -79,7 +111,40 @@
             border: 1px solid #ccc;
             padding: 4px;
             text-align: left;
+            white-space: nowrap;
+        }
 
+        .list-table th:first-child,
+        .list-table td:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 20;
+            background-color: #f8f9fa;
+        }
+
+        .list-table th:first-child {
+            z-index: 30;
+        }
+
+        .list-table tr:hover {
+            background-color: #00b342
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .success {
+            display: block !important;
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .even {
+            background-color: #d4edda;
         }
     </style>
 </head>
@@ -92,28 +157,37 @@
         <label>名前（任意）</label>
         <input type="text" id="userName" placeholder="全て">
 
+        <div class="radio-group">
+            <label>懇親会への参加有無</label>
+            <label><input type="radio" name="party" value="" checked>全部</label>
+            <label><input type="radio" name="party" value="しない" checked>しない</label>
+            <label><input type="radio" name="party" value="する">する</label>
+        </div>
+
         <button onclick="listTable()">参加者を参照する</button>
 
         <div id="result"></div>
-        <table class="list-table">
-            <thead>
-                <tr>
-                    <th>No.</th>
-                    <th>名前</th>
-                    <th>email</th>
-                    <th>学校</th>
-                    <th>学部・学科</th>
-                    <th>学年</th>
-                    <th>興味</th>
-                    <th>住所</th>
-                    <th>ひとこと</th>
-                    <th>懇親会参加</th>
-                    <th>登録日時</th>
-                </tr>
-            </thead>
-            <tbody id="table-body">
-            </tbody>
-        </table>
+        <div class="table-container">
+            <table class="list-table">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>名前</th>
+                        <th>email</th>
+                        <th>学校</th>
+                        <th>学部・学科</th>
+                        <th>学年</th>
+                        <th>興味</th>
+                        <th>住所</th>
+                        <th>ひとこと</th>
+                        <th>懇親会参加</th>
+                        <th>登録日時</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                </tbody>
+            </table>
+        </div>
     </div>
 
 
@@ -146,46 +220,64 @@
             const studentList = JSON.parse(currentListJson)
             const students = Object.values(studentList)
             let ix = 0
-            
+
 
 
             let searchName = document.getElementById('userName').value.trim()
+            let radio1 = document.querySelector('input[name = "party"]:checked')
             for (const student of students) {
-                if (searchName === "" || student.name === searchName) {
-                    // 新しい行を作成
-                    const row = tbody.insertRow()
-                    ix++
+                if (searchName && student.name.indexOf(searchName) === -1) {
+                    continue
 
-                    // 編集用リンクを作成
-                    const email = student.email
-                    const editUrl = `index.html?email=${encodeURIComponent(email)}`
-
-                    const linkIndex = `<a href="${editUrl}" target="_blank">${ix}</a>`
-
-
-
-
-                    // 'tdタグ'を作成
-                    row.insertCell(0).innerHTML = linkIndex
-                    row.insertCell(1).textContent = student.name
-                    row.insertCell(2).textContent = student.email
-                    row.insertCell(3).textContent = student.university
-                    row.insertCell(4).textContent = student.department
-                    row.insertCell(5).textContent = student.grade
-                    row.insertCell(6).textContent = student.interests.join(',')
-                    row.insertCell(7).textContent = student.address
-                    row.insertCell(8).textContent = student.message
-                    row.insertCell(9).textContent = student.party
-                    row.insertCell(10).textContent = student.updatedAt
                 }
-                
-                
+
+                // 広→狭
+                if (radio1.value && radio1.value !== student.party) {
+                    continue
+                }
+
+
+                // 新しい行を作成
+                const row = tbody.insertRow()
+                row.className = ""
+
+                ix++
+
+                if (ix % 2 === 0) {
+                    row.className = "even"
+                }
+
+                // 編集用リンクを作成
+                const email = student.email
+                const editUrl = `index.html?email=${encodeURIComponent(email)}`
+
+                const linkIndex = `<a href="${editUrl}" target="_blank">${ix}</a>`
+
+
+
+
+                // 'tdタグ'を作成
+                row.insertCell(0).innerHTML = linkIndex
+                row.insertCell(1).textContent = student.name
+                row.insertCell(2).textContent = student.email
+                row.insertCell(3).textContent = student.university
+                row.insertCell(4).textContent = student.department
+                row.insertCell(5).textContent = student.grade
+                row.insertCell(6).textContent = student.interests.join(',')
+                row.insertCell(7).textContent = student.address
+                row.insertCell(8).textContent = student.message
+                row.insertCell(9).textContent = student.party
+                row.insertCell(10).textContent = student.updatedAt
+
+
+
             }
 
 
 
             resultDiv.className = successClassName
-            resultDiv.innerHTML = `${students.length}件のデータがありました。`
+            // resultDiv.innerHTML = `${students.length}件のデータがありました。`
+            resultDiv.innerHTML = ix + "件のデータがありました。"
 
         }
 
