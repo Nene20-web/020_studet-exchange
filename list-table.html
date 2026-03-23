@@ -169,6 +169,17 @@
             color: white;
             border-color: orange;
         }
+
+        .list-table th[onclick]{
+            cursor: pointer;
+            background-color: #eee;
+            transition: background 0.3s;
+        }
+
+        .list-table th[onclick]:hover{
+            background-color: orange;
+            color: white;
+        }
     </style>
 </head>
 
@@ -183,7 +194,7 @@
         <div class="radio-group">
             <label>懇親会への参加有無</label>
             <label><input type="radio" name="party" value="" checked>全部</label>
-            <label><input type="radio" name="party" value="しない" checked>しない</label>
+            <label><input type="radio" name="party" value="しない" >しない</label>
             <label><input type="radio" name="party" value="する">する</label>
         </div>
 
@@ -198,16 +209,16 @@
                 <thead>
                     <tr>
                         <th>No.</th>
-                        <th>名前</th>
-                        <th>email</th>
-                        <th>学校</th>
-                        <th>学部・学科</th>
-                        <th>学年</th>
+                        <th onclick="sortBy(this,'name')" >名前</th>
+                        <th onclick="sortBy(this,'email')" >email</th>
+                        <th onclick="sortBy(this,'university')" >学校</th>
+                        <th onclick="sortBy(this,'department')" >学部・学科</th>
+                        <th onclick="sortBy(this,'grade')" >学年</th>
                         <th>興味</th>
-                        <th>住所</th>
-                        <th>ひとこと</th>
-                        <th>懇親会参加</th>
-                        <th>登録日時</th>
+                        <th onclick="sortBy(this,'address')" >住所</th>
+                        <th onclick="sortBy(this,'message')" >ひとこと</th>
+                        <th onclick="sortBy(this,'party')" >懇親会参加</th>
+                        <th onclick="sortBy(this,'updatedAt')" >登録日時</th>
                     </tr>
                 </thead>
                 <tbody id="table-body">
@@ -223,7 +234,12 @@
         CONFIG_PAGE = {
             current: 1,
             rows: 5,
+            sort: { 
+                // 'カラム名'：0,  //ソート（0:解除、1:昇順、2:降順）    
+            },
         }
+
+        //page=1 デフォルト
         function listTable(page = 1) {
             // スタイルのクラス名
             const errClassName = 'error'
@@ -260,6 +276,12 @@
 
             const studentList = JSON.parse(currentListJson)
             let students = Object.values(studentList)
+
+            students.sort((before, after) => {
+                const sortColumns = Object.keys(CONFIG_PAGE.sort)
+                const sortStates = CONFIG_PAGE.sort
+                return _sortCompare(before, after, sortColumns, sortStates)
+            })
 
 
             //ページネーションを設定、ページ番号を更新
@@ -368,6 +390,75 @@
             // resultDiv.innerHTML = `${students.length}件のデータがありました。`
             resultDiv.innerHTML = `${totalRows} 件中 ${pageStart + 1}〜${Math.min(pageEnd, totalRows)} 件を表示中`
 
+        }
+
+
+        // ソート比較結果を返す
+        function _sortCompare(before, after, sortColumns, sortStates) {
+            for (const columnName of sortColumns) {
+                let leftValue, rightValue
+                const sortState = sortStates[columnName]
+                // 並び指定
+                switch (sortState) {
+                    // 解除
+                    case 0:
+                        continue
+                        break
+                    // 昇順
+                    case 1:
+                        leftValue = before[columnName]
+                        rightValue = after[columnName]
+                        break
+                    // 降順
+                    case 2:
+                        leftValue = after[columnName]
+                        rightValue = before[columnName]
+                        break
+                }
+
+                const compare = leftValue.localeCompare(rightValue, 'ja')
+                //  leftValue - rightValue
+                // 並び順が確定したら終了
+                if (compare !== 0) {
+                    return compare;
+                }
+            }
+
+            return 0;
+        }
+
+        // 矢印を入れる空白(span)
+        function sortBy(elem, columnName) {
+            let icon = elem.querySelector('span')
+            if(!icon){
+                icon = document.createElement('span')
+                elem.appendChild(icon)
+            }
+
+            // 状態を０１２０とループさせる
+
+            let sortState = CONFIG_PAGE.sort[columnName] ||0;
+            sortState = (sortState + 1) % 3
+            CONFIG_PAGE.sort[columnName] = sortState
+            
+
+            // ソート実行
+            switch (sortState) {
+                // 昇順
+                case 1:
+                    icon.innerHTML ='🔼';
+                    break
+                // 降順
+                case 2:
+                    icon.innerHTML = '🔽';
+                    break
+                // 解除
+                default:
+                    icon.innerHTML = '';
+                    break
+            }
+
+            listTable()
         }
 
 
