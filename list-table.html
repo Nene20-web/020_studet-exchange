@@ -297,11 +297,17 @@
 
             //ページネーション計算
             const totalRows = students.length
-            const totalPages = Math.ceil(totalRows / CONFIG_PAGE.rows)
+            const totalPages = Math.ceil(totalRows / CONFIG_PAGE.rows) //表示するページの数
             //表示する範囲を決定
             const pageStart = (CONFIG_PAGE.current - 1) * CONFIG_PAGE.rows
             const pageEnd = pageStart + CONFIG_PAGE.rows
             const pageStudents = students.slice(pageStart, pageEnd)
+
+            if (totalPages <= 0) {
+                resultDiv.innerHTML = '０件のデータがありました。'
+                resultDiv.className = errClassName
+                return
+            }
 
             let ix1 = pageStart
             for (student of pageStudents) {
@@ -340,7 +346,7 @@
             }
 
             //ページネーションボタンの作成
-            for (let ix2 = 1; ix2 <= totalPages; ix2++) {
+            for (let ix2 = 1; ix2 <= totalPages; ix2++) { //
                 //ページ切り替え用ボタンを作成
                 const btn = document.createElement('button')
                 //ページ番号を設定
@@ -352,6 +358,8 @@
                 btn.onclick = function () {
                     listTable(ix2)
                 }
+                //無名関数
+
                 //ページネーションのエリアにボタンを追加する
                 paginationDiv.appendChild(btn)
             }
