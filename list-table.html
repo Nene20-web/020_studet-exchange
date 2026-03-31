@@ -416,7 +416,15 @@
                         break
                 }
 
-                const compare = leftValue.localeCompare(rightValue, 'ja')
+
+                let compare 
+                //日付の場合の比較はDateで日付型に戻す→cast、変換型
+                if(columnName === 'updatedAt'){
+                    compare = new Date(leftValue) - new Date(rightValue)
+                }else{
+                    compare = leftValue.localeCompare(rightValue, 'ja')
+                }
+                
                 //  leftValue - rightValue
                 // 並び順が確定したら終了
                 if (compare !== 0) {
