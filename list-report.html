@@ -87,7 +87,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/3.0.3/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/5.0.2/jspdf.plugin.autotable.min.js"></script>
-    <!-- <script src="./font/myFontFamily-base64.js"></script> -->
+    <script src="./font/myFontFamily-base64.js"></script>
 
 </head>
 
@@ -135,9 +135,9 @@
             const doc = new jsPDF('1', 'mm', 'a3')
 
             // フォントを登録
-            // doc.addFileToVFS('NotoSansJP-Regular.ttf', MY_JONT_FAMILY.NotoSansJP_Reg)
-            // doc.addFont('NotoSansJP-Regular.ttf', REPORT_FONT.NAME, REPORT_FONT.STYLE)
-            // doc.setFont('NotoSansJP')
+            doc.addFileToVFS('NotoSansJP-Regular.ttf', MY_FONT_FAMILY.NotoSansJP_Reg)
+            doc.addFont('NotoSansJP-Regular.ttf', REPORT_FONT.NAME, REPORT_FONT.STYLE)
+            doc.setFont('NotoSansJP')
 
             // タイトルの設定
             doc.setFontSize(REPORT_FONT.SIZE)
