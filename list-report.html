@@ -83,6 +83,23 @@
         .list-grid-container {
             font-size: 13px !important;
         }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .date-flex-box {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/3.0.3/jspdf.umd.min.js"></script>
@@ -96,6 +113,11 @@
         <h1>企業向け・学生交流会　参加登録　報告リスト</h1>
         <p>参加者の報告リストを発行します。</p>
 
+        <label>発行対象期間（登録日時）</label>
+        <div class="date-flex-box">
+            <input type="date" id="dateStart"> ~ <input type="date" id="dateEnd">
+        </div>
+
         <button onclick="printReport()">報告リストを発行する</button>
 
         <div id="result"></div>
@@ -103,6 +125,11 @@
 
     <script>
         function printReport() {
+            // 入力された日付（文字列）を取得
+            const dateStart = document.getElementById('dateStart').value
+            const dateEnd = document.getElementById('dateEnd').value
+            console.log('日付範囲', dateStart, dateEnd)
+
             // バリデーションスタイルのクラス名
             const errClassName = 'error'
             const successClassName = 'success'
@@ -112,6 +139,16 @@
 
             resultDiv.innerHTML = ""
             resultDiv.className = ""
+
+
+            if (dateStart && dateEnd) {
+                if (dateStart > dateEnd) {
+                    resultDiv.className = errClassName
+                    resultDiv.innerHTML = "日付範囲が正しくありません。"
+                    return
+                }
+            }
+
 
             const storageKey = 'student_list'
             const currentListJson = localStorage.getItem(storageKey)
@@ -145,23 +182,40 @@
 
             const students = Object.values(studentList)
             const tableBody = []
-            for (student of students){
+            for (student of students) {
+                const updateAtDate = new Date(student.updatedAt)
+                const updateAtString = updateAtDate.toISOString()
+                const updateAtArray = updateAtString.split('T')
+                const updateAt = updateAtArray[0]
+                // const updateAt = new Date(student.updatedAt).toISOStirng().split('T')[0]
+
+                // 日付範囲の判定
+                // 開始日が入力されていて、それより前なら除外
+                if (dateStart && updateAt < dateStart) {
+                    continue
+                }
+
+                // 終了日が入力されていて、それより後なら除外
+                if (dateEnd && updateAt > dateEnd) {
+                    continue
+                }
+
                 tableBody.push(Object.values(student))
             }
 
             // １件もない
-            if (!tableBody.length){
+            if (!tableBody.length) {
                 resultDiv.className = errClassName
                 resultDiv.innerHTML = '登録データがまだありません。'
-                return 
+                return
             }
 
             // テーブル制作時にもフォントを指定
             doc.autoTable({
-                head:[['名前','email','学校','学部・学科','学年','興味','住所','ひとこと','懇親会参加','登録日時']],
+                head: [['名前', 'email', '学校', '学部・学科', '学年', '興味', '住所', 'ひとこと', '懇親会参加', '登録日時']],
                 body: tableBody,
-                styles:{font: REPORT_FONT.NAME, fontSize: REPORT_FONT.SIZE, fontStyle: REPORT_FONT.STYLE},
-                startY:30,
+                styles: { font: REPORT_FONT.NAME, fontSize: REPORT_FONT.SIZE, fontStyle: REPORT_FONT.STYLE },
+                startY: 30,
             })
 
             // ブラウザ内に表示の場合
@@ -172,4 +226,5 @@
         }
     </script>
 </body>
+
 </html>
